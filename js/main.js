@@ -24,12 +24,25 @@ async function onSubmit(event) {
     event.preventDefault();
 
     const input = inputEl.value.trim();
-    //Här ska anrop av funktioner ske
+    
+    if (!validateForm(input)) {
+        return;
+    }
+
+    console.log(input);
+    // Rensa sökfältet
+    inputEl.value = "";
 }
 
 // Validera formulärets inmatning
 function validateForm(input) {
+    formErrorEl.innerHTML = "";
 
+    if (input === "") {
+        formErrorEl.innerHTML = "Du behöver ange en sökfras...";
+        return false;
+    }
+    return true;
 }
 
 // Hämta data från API
