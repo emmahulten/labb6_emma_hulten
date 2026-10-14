@@ -28,10 +28,19 @@ async function onSubmit(event) {
     if (!validateForm(input)) {
         return;
     }
+    
+    const data = await getProduct(input);
 
-    console.log(input);
+    // Avbryt om API-anropet inte gav användbar data
+    if (data === null) {
+        return;
+    }
+
+    showResult(data);
+    
     // Rensa sökfältet
     inputEl.value = "";
+
 }
 
 // Validera formulärets inmatning
@@ -45,12 +54,43 @@ function validateForm(input) {
     return true;
 }
 
-// Hämta data från API
+// Hämta recept från API:et och hantera eventuella fel
 async function getProduct(input) {
+    dataErrorEl.innerHTML = "";
 
+    try {
+        const response = await fetch(`https://dummyjson.com/recipes/search?q=${input}`);
+        
+        if (!response.ok) {
+        throw new Error("Kunde inte hämta data från API:et");
+       } 
+       
+       // Hämta JSON
+       const data = await response.json();
+
+       if (!data) {
+        dataErrorEl.innerHTML = "Kunde inte hämta recept. Försök igen";
+        return null;
+       }
+       if (data.recipes.length === 0) {
+        dataErrorEl.innerHTML = "Inget recept hittaes, prova en ny sökfras";
+        return null; 
+       }
+
+       return data;
+
+    } catch (error) {
+        console.log(error);
+        dataErrorEl.innerHTML = "Kunde inte hämta recept. Försök igen";
+        return null;
+        
+
+    }
 }
 
 // Visa sökresultatet
 function showResult(data) {
+    // Tillf. test
+    console.log(data);
 
 }
